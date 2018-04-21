@@ -22,9 +22,9 @@ export interface IRequestDetails {
   route: string
 }
 
-export interface IResponse extends Response {
-  unusedKey?: string
-}
+// export interface IResponse extends Response {
+//   unusedKey?: string
+// }
 
 export interface IResponseEnvelope {
   code: number
@@ -108,7 +108,7 @@ export abstract class HCRoute {
    * @param title
    * @returns {(params:any)=>undefined}
    */
-  public static errResponse(req: Request, res: IResponse, title: string) {
+  public static errResponse(req: Request, res: Response, title: string) {
     return (params: IErrorParams) => {
       let code = HTTP_CODE_SERVER_ERROR
       let meta
@@ -160,7 +160,7 @@ export abstract class HCRoute {
    * @param title
    * @returns {(params:any)=>undefined}
    */
-  public static okResponse(req: Request, res: IResponse, title: string) {
+  public static okResponse(req: Request, res: Response, title: string) {
     return (params: IOkParams) => {
       /*
        if (params.code !== undefined && params.data !== undefined){
@@ -228,7 +228,7 @@ export abstract class HCRoute {
 
   public jsonAPI() {
     // const __this = this;
-    return (req: Request, res: IResponse) => {
+    return (req: Request, res: Response) => {
       const parameters: IParamsObject = {}
       for (let paramIdx = 0; paramIdx < this.requiredQueryParams.length; paramIdx++) {
         const requiredParam = this.requiredQueryParams[paramIdx]
@@ -297,5 +297,5 @@ export abstract class HCRoute {
     }
   }
 
-  protected abstract handleRequest(params: any, req: Request, res: IResponse): Promise<any> | Bluebird<any>
+  protected abstract handleRequest(params: any, req: Request, res: Response): Promise<any> | Bluebird<any>
 }
