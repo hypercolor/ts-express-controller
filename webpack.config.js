@@ -8,7 +8,7 @@ const packageName = normalizePackageName(packageJSON.name)
 
 const LIB_NAME = pascalCase(packageName)
 const PATHS = {
-  entryPoint: resolve(__dirname, 'src/index.ts'),
+  entryPoint: resolve(__dirname, 'index.ts'),
   umd: resolve(__dirname, 'umd'),
   fesm: resolve(__dirname, 'lib-fesm'),
 }
