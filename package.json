@@ -1,5 +1,5 @@
 {
-  "name": "hc-route",
+  "name": "ts-express-controller",
   "version": "0.1.0",
   "description": "TypeScript express route helper",
   "main": "umd/hc-route.js",

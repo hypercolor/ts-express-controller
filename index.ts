@@ -1,1 +1,1 @@
-export { HCRoute } from './src/HCRoute'
+export { Controller } from './src/Controller'

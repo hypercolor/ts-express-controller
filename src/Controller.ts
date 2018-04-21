@@ -73,7 +73,7 @@ const HTTP_CODE_OK = 200
  *
  * @class BaseRoute
  */
-export abstract class HCRoute {
+export abstract class Controller {
   private static routeConfig = {
     packageName: 'Package Name',
     packageDescription: 'Package Description',
@@ -118,7 +118,7 @@ export abstract class HCRoute {
         meta = 'Error code: ' + params.code
       }
 
-      const response = HCRoute.responseEnvelope(
+      const response = Controller.responseEnvelope(
         req,
         title,
         code,
@@ -173,7 +173,7 @@ export abstract class HCRoute {
       res
         .status(params.code || HTTP_CODE_OK)
         .json(
-          HCRoute.responseEnvelope(req, title, params.code, true, params.data, null, undefined, null, params.message)
+          Controller.responseEnvelope(req, title, params.code, true, params.data, null, undefined, null, params.message)
         )
     }
   }
@@ -234,7 +234,7 @@ export abstract class HCRoute {
         const requiredParam = this.requiredQueryParams[paramIdx]
         const foundParam: any = req.query[requiredParam]
         if (foundParam === undefined) {
-          HCRoute.errResponse(req, res, this.constructor.name)({
+          Controller.errResponse(req, res, this.constructor.name)({
             code: HTTP_CODE_INPUT_ERROR,
             error: 'Required query parameter not found in request url: ' + requiredParam,
           })
@@ -247,7 +247,7 @@ export abstract class HCRoute {
         const requiredParam = this.requiredRouteParams[paramIdx]
         const foundParam = req.params[requiredParam]
         if (foundParam === undefined) {
-          HCRoute.errResponse(req, res, this.constructor.name)({
+          Controller.errResponse(req, res, this.constructor.name)({
             code: HTTP_CODE_SERVER_ERROR,
             error: 'Required route parameter not mapped for request: ' + requiredParam,
           })
@@ -260,7 +260,7 @@ export abstract class HCRoute {
         const requiredParam = this.requiredBodyParams[paramIdx]
         const foundParam = req.body[requiredParam]
         if (foundParam === undefined) {
-          HCRoute.errResponse(req, res, this.constructor.name)({
+          Controller.errResponse(req, res, this.constructor.name)({
             code: HTTP_CODE_INPUT_ERROR,
             error: 'Required body parameter not found in request body: ' + requiredParam,
           })
@@ -282,7 +282,7 @@ export abstract class HCRoute {
                   code: this.successCode,
                   data: handlerResult,
                 }
-          HCRoute.okResponse(req, res, this.constructor.name)(payload)
+          Controller.okResponse(req, res, this.constructor.name)(payload)
         })
         .catch((handlerError: any) => {
           handlerError = handlerError || {}
@@ -292,7 +292,7 @@ export abstract class HCRoute {
           if (handlerError.stack) {
             console.log('stack: ' + handlerError.stack)
           }
-          HCRoute.errResponse(req, res, this.constructor.name)({ code, error, stack: handlerError.stack })
+          Controller.errResponse(req, res, this.constructor.name)({ code, error, stack: handlerError.stack })
         })
     }
   }

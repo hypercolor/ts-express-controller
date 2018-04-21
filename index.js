@@ -91,13 +91,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /*!******************!*\
   !*** ./index.ts ***!
   \******************/
-/*! exports provided: HCRoute */
+/*! exports provided: Controller */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _src_HCRoute__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/HCRoute */ "./src/HCRoute.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HCRoute", function() { return _src_HCRoute__WEBPACK_IMPORTED_MODULE_0__["HCRoute"]; });
+/* harmony import */ var _src_Controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/Controller */ "./src/Controller.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return _src_Controller__WEBPACK_IMPORTED_MODULE_0__["Controller"]; });
 
 
 
@@ -105,16 +105,16 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/HCRoute.ts":
-/*!************************!*\
-  !*** ./src/HCRoute.ts ***!
-  \************************/
-/*! exports provided: HCRoute */
+/***/ "./src/Controller.ts":
+/*!***************************!*\
+  !*** ./src/Controller.ts ***!
+  \***************************/
+/*! exports provided: Controller */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HCRoute", function() { return HCRoute; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return Controller; });
 
 // import {IAuthRequest} from '../auth/auth';
 // import {IAuthRequest} from '../../util/auth';
@@ -131,14 +131,14 @@ var HTTP_CODE_OK = 200;
  *
  * @class BaseRoute
  */
-var HCRoute = (function () {
+var Controller = (function () {
     /**
      * Constructor
      *
      * @class BaseRoute
      * @constructor
      */
-    function HCRoute(config) {
+    function Controller(config) {
         this.successCode = HTTP_CODE_OK;
         this.failureCode = HTTP_CODE_SERVER_ERROR;
         config = config || {};
@@ -156,7 +156,7 @@ var HCRoute = (function () {
      * @param title
      * @returns {(params:any)=>undefined}
      */
-    HCRoute.errResponse = function (req, res, title) {
+    Controller.errResponse = function (req, res, title) {
         return function (params) {
             var code = HTTP_CODE_SERVER_ERROR;
             var meta;
@@ -166,7 +166,7 @@ var HCRoute = (function () {
             else {
                 meta = 'Error code: ' + params.code;
             }
-            var response = HCRoute.responseEnvelope(req, title, code, false, undefined, params.error || params, params.stack, meta, params.message);
+            var response = Controller.responseEnvelope(req, title, code, false, undefined, params.error || params, params.stack, meta, params.message);
             if ((code === HTTP_CODE_SERVER_ERROR && process.env.INSTRUMENT_ERRORS_500 === 'true') ||
                 process.env.INSTRUMENT_ERRORS_ALL === 'true') {
                 console.log(code + ' error: ' + JSON.stringify(response, null, 2));
@@ -191,7 +191,7 @@ var HCRoute = (function () {
      * @param title
      * @returns {(params:any)=>undefined}
      */
-    HCRoute.okResponse = function (req, res, title) {
+    Controller.okResponse = function (req, res, title) {
         return function (params) {
             /*
              if (params.code !== undefined && params.data !== undefined){
@@ -202,10 +202,10 @@ var HCRoute = (function () {
              */
             res
                 .status(params.code || HTTP_CODE_OK)
-                .json(HCRoute.responseEnvelope(req, title, params.code, true, params.data, null, undefined, null, params.message));
+                .json(Controller.responseEnvelope(req, title, params.code, true, params.data, null, undefined, null, params.message));
         };
     };
-    HCRoute.responseEnvelope = function (req, routeTitle, code, success, data, error, stack, meta, message) {
+    Controller.responseEnvelope = function (req, routeTitle, code, success, data, error, stack, meta, message) {
         var envDescriptor = process.env.ENVIRONMENT_DESCRIPTOR || 'unknown';
         var response = {
             code: code,
@@ -243,7 +243,7 @@ var HCRoute = (function () {
         }
         return response;
     };
-    HCRoute.prototype.jsonAPI = function () {
+    Controller.prototype.jsonAPI = function () {
         var _this = this;
         // const __this = this;
         return function (req, res) {
@@ -252,7 +252,7 @@ var HCRoute = (function () {
                 var requiredParam = _this.requiredQueryParams[paramIdx];
                 var foundParam = req.query[requiredParam];
                 if (foundParam === undefined) {
-                    HCRoute.errResponse(req, res, _this.constructor.name)({
+                    Controller.errResponse(req, res, _this.constructor.name)({
                         code: HTTP_CODE_INPUT_ERROR,
                         error: 'Required query parameter not found in request url: ' + requiredParam,
                     });
@@ -266,7 +266,7 @@ var HCRoute = (function () {
                 var requiredParam = _this.requiredRouteParams[paramIdx];
                 var foundParam = req.params[requiredParam];
                 if (foundParam === undefined) {
-                    HCRoute.errResponse(req, res, _this.constructor.name)({
+                    Controller.errResponse(req, res, _this.constructor.name)({
                         code: HTTP_CODE_SERVER_ERROR,
                         error: 'Required route parameter not mapped for request: ' + requiredParam,
                     });
@@ -280,7 +280,7 @@ var HCRoute = (function () {
                 var requiredParam = _this.requiredBodyParams[paramIdx];
                 var foundParam = req.body[requiredParam];
                 if (foundParam === undefined) {
-                    HCRoute.errResponse(req, res, _this.constructor.name)({
+                    Controller.errResponse(req, res, _this.constructor.name)({
                         code: HTTP_CODE_INPUT_ERROR,
                         error: 'Required body parameter not found in request body: ' + requiredParam,
                     });
@@ -300,7 +300,7 @@ var HCRoute = (function () {
                         code: _this.successCode,
                         data: handlerResult,
                     };
-                HCRoute.okResponse(req, res, _this.constructor.name)(payload);
+                Controller.okResponse(req, res, _this.constructor.name)(payload);
             })
                 .catch(function (handlerError) {
                 handlerError = handlerError || {};
@@ -310,16 +310,16 @@ var HCRoute = (function () {
                 if (handlerError.stack) {
                     console.log('stack: ' + handlerError.stack);
                 }
-                HCRoute.errResponse(req, res, _this.constructor.name)({ code: code, error: error, stack: handlerError.stack });
+                Controller.errResponse(req, res, _this.constructor.name)({ code: code, error: error, stack: handlerError.stack });
             });
         };
     };
-    HCRoute.routeConfig = {
+    Controller.routeConfig = {
         packageName: 'Package Name',
         packageDescription: 'Package Description',
         packageVersion: 'Package Version',
     };
-    return HCRoute;
+    return Controller;
 }());
 
 
