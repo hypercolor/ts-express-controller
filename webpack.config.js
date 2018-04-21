@@ -191,7 +191,8 @@ module.exports = {
 
   output: {
     path: path.join(__dirname, './'),
-    filename: '[name].js'
+    filename: '[name].js',
+    libraryTarget: 'umd'
   },
 
   module: {
