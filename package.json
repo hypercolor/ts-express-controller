@@ -1,6 +1,6 @@
 {
   "name": "ts-express-controller",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript express route helper",
   "main": "umd/hc-route.js",
   "module": "lib/index.js",
@@ -46,6 +46,9 @@
     "release:preflight:package": "npm pack",
     "size": "shx echo \"Gzipped Size:\" && cross-var strip-json-comments --no-whitespace $npm_package_main | gzip-size"
   },
+  "files": [
+    "src/**"
+  ],
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
