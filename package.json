@@ -1,6 +1,6 @@
 {
   "name": "ts-express-controller",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "TypeScript express route helper",
   "main": "umd/hc-route.js",
   "module": "lib/index.js",
