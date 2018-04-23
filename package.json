@@ -47,6 +47,8 @@
     "size": "shx echo \"Gzipped Size:\" && cross-var strip-json-comments --no-whitespace $npm_package_main | gzip-size"
   },
   "files": [
+    "index.*",
+    "lib/**",
     "src/**"
   ],
   "config": {
