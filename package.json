@@ -8,12 +8,12 @@
   "typings": "typings/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://www.github.com/hypercolor/hc-route"
+    "url": "https://www.github.com/hypercolor/ts-express-controller"
   },
-  "author": "Martin Hochel",
+  "author": "Andrew Aarestad",
   "license": "MIT",
   "engines": {
-    "node": ">=6.9"
+    "node": ">=8.2"
   },
   "scripts": {
     "cleanup": "shx rm -rf umd lib lib-esm lib-fesm typings coverage docs",
