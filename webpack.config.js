@@ -168,6 +168,8 @@ const path = require('path');
 
 const webpack = require('webpack');
 
+const libraryName = 'ts-express-controller';
+
 const nodeModules = {};
 
 fs.readdirSync('node_modules')
@@ -219,7 +221,7 @@ module.exports = {
     ]
   },
 
-  plugins: [],
+  plugins: [new DtsBundlePlugin()],
 
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
@@ -230,3 +232,22 @@ module.exports = {
   devtool: 'source-map'
 
 };
+
+
+function DtsBundlePlugin(){}
+DtsBundlePlugin.prototype.apply = function (compiler) {
+  compiler.plugin('done', function(){
+    var dts = require('dts-bundle');
+    dts.bundle({
+      name: libraryName,
+      main: 'lib/index.d.ts',
+      out: '../index.d.ts',
+      removeSource: true,
+      outputAsModuleFolder: true // to use npm in-package typings
+    });
+
+    // Delete unneeded files
+
+  });
+};
+
