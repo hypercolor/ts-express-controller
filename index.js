@@ -211,10 +211,10 @@ var Controller = (function () {
             code: code,
             success: success,
             server: {
-                name: this.routeConfig.packageName,
-                description: this.routeConfig.packageDescription,
+                name: this.packageConfig.packageName,
+                description: this.packageConfig.packageDescription,
                 env: envDescriptor,
-                version: this.routeConfig.packageVersion,
+                version: this.packageConfig.packageVersion,
             },
             request: {
                 url: req.originalUrl,
@@ -314,10 +314,10 @@ var Controller = (function () {
             });
         };
     };
-    Controller.routeConfig = {
-        packageName: 'Package Name',
-        packageDescription: 'Package Description',
-        packageVersion: 'Package Version',
+    Controller.packageConfig = {
+        packageName: 'Default Package Name',
+        packageDescription: 'Default Package Description',
+        packageVersion: 'Default Package Version',
     };
     return Controller;
 }());

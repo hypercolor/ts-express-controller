@@ -74,10 +74,10 @@ const HTTP_CODE_OK = 200
  * @class BaseRoute
  */
 export abstract class Controller {
-  private static routeConfig = {
-    packageName: 'Package Name',
-    packageDescription: 'Package Description',
-    packageVersion: 'Package Version',
+  public static packageConfig = {
+    packageName: 'Default Package Name',
+    packageDescription: 'Default Package Description',
+    packageVersion: 'Default Package Version',
   }
 
   protected requiredQueryParams: Array<string>
@@ -194,10 +194,10 @@ export abstract class Controller {
       code,
       success,
       server: {
-        name: this.routeConfig.packageName,
-        description: this.routeConfig.packageDescription,
+        name: this.packageConfig.packageName,
+        description: this.packageConfig.packageDescription,
         env: envDescriptor,
-        version: this.routeConfig.packageVersion,
+        version: this.packageConfig.packageVersion,
       },
       request: {
         url: req.originalUrl,

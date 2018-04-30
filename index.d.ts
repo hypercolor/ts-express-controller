@@ -55,6 +55,11 @@ export interface IParamsObject {
     * @class BaseRoute
     */
 export abstract class Controller {
+        static packageConfig: {
+                packageName: string;
+                packageDescription: string;
+                packageVersion: string;
+        };
         protected requiredQueryParams: Array<string>;
         protected requiredRouteParams: Array<string>;
         protected requiredBodyParams: Array<string>;
