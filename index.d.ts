@@ -55,11 +55,6 @@ export interface IParamsObject {
     * @class BaseRoute
     */
 export abstract class Controller {
-        static packageConfig: {
-                packageName: string;
-                packageDescription: string;
-                packageVersion: string;
-        };
         protected requiredQueryParams: Array<string>;
         protected requiredRouteParams: Array<string>;
         protected requiredBodyParams: Array<string>;
@@ -92,5 +87,13 @@ export abstract class Controller {
         static okResponse(req: Request, res: Response, title: string): (params: IOkParams) => void;
         jsonAPI(): (req: Request, res: Response) => void;
         protected abstract handleRequest(params: any, req: Request, res: Response): Promise<any> | Bluebird<any>;
+}
+
+export class ControllerConfig {
+    static packageConfig: {
+        packageName: string;
+        packageDescription: string;
+        packageVersion: string;
+    };
 }
 

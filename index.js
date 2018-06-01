@@ -91,13 +91,17 @@ return /******/ (function(modules) { // webpackBootstrap
 /*!******************!*\
   !*** ./index.ts ***!
   \******************/
-/*! exports provided: Controller */
+/*! exports provided: Controller, ControllerConfig */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _src_Controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/Controller */ "./src/Controller.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return _src_Controller__WEBPACK_IMPORTED_MODULE_0__["Controller"]; });
+
+/* harmony import */ var _src_ControllerConfig__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/ControllerConfig */ "./src/ControllerConfig.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ControllerConfig", function() { return _src_ControllerConfig__WEBPACK_IMPORTED_MODULE_1__["ControllerConfig"]; });
+
 
 
 
@@ -115,6 +119,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return Controller; });
+/* harmony import */ var _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ControllerConfig */ "./src/ControllerConfig.ts");
+
 
 // import {IAuthRequest} from '../auth/auth';
 // import {IAuthRequest} from '../../util/auth';
@@ -211,10 +217,10 @@ var Controller = (function () {
             code: code,
             success: success,
             server: {
-                name: this.packageConfig.packageName,
-                description: this.packageConfig.packageDescription,
+                name: _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__["ControllerConfig"].packageConfig.packageName,
+                description: _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__["ControllerConfig"].packageConfig.packageDescription,
                 env: envDescriptor,
-                version: this.packageConfig.packageVersion,
+                version: _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__["ControllerConfig"].packageConfig.packageVersion,
             },
             request: {
                 url: req.originalUrl,
@@ -314,12 +320,33 @@ var Controller = (function () {
             });
         };
     };
-    Controller.packageConfig = {
+    return Controller;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/ControllerConfig.ts":
+/*!*********************************!*\
+  !*** ./src/ControllerConfig.ts ***!
+  \*********************************/
+/*! exports provided: ControllerConfig */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ControllerConfig", function() { return ControllerConfig; });
+
+var ControllerConfig = (function () {
+    function ControllerConfig() {
+    }
+    ControllerConfig.packageConfig = {
         packageName: 'Default Package Name',
         packageDescription: 'Default Package Description',
         packageVersion: 'Default Package Version',
     };
-    return Controller;
+    return ControllerConfig;
 }());
 
 

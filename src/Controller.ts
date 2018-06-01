@@ -1,5 +1,6 @@
 import * as Bluebird from 'bluebird'
 import { Request, Response } from 'express'
+import { ControllerConfig } from './ControllerConfig'
 // import {IAuthRequest} from '../auth/auth';
 // import {IAuthRequest} from '../../util/auth';
 
@@ -74,12 +75,6 @@ const HTTP_CODE_OK = 200
  * @class BaseRoute
  */
 export abstract class Controller {
-  public static packageConfig = {
-    packageName: 'Default Package Name',
-    packageDescription: 'Default Package Description',
-    packageVersion: 'Default Package Version',
-  }
-
   protected requiredQueryParams: Array<string>
   protected requiredRouteParams: Array<string>
   protected requiredBodyParams: Array<string>
@@ -194,10 +189,10 @@ export abstract class Controller {
       code,
       success,
       server: {
-        name: this.packageConfig.packageName,
-        description: this.packageConfig.packageDescription,
+        name: ControllerConfig.packageConfig.packageName,
+        description: ControllerConfig.packageConfig.packageDescription,
         env: envDescriptor,
-        version: this.packageConfig.packageVersion,
+        version: ControllerConfig.packageConfig.packageVersion,
       },
       request: {
         url: req.originalUrl,
