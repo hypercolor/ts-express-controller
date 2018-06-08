@@ -1,6 +1,6 @@
 {
   "name": "ts-express-controller",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "TypeScript express route helper",
   "main": "index.js",
   "types": "index.d.ts",
@@ -96,8 +96,12 @@
   },
   "dependencies": {
     "@types/bluebird": "3.5.20",
+    "@types/csv-stringify": "1.4.2",
     "bluebird": "3.5.1",
+    "csv": "3.1.0",
+    "csv-stringify": "3.0.0",
     "express": "4.16.3",
+    "express-csv": "0.6.0",
     "ts-loader": "4.2.0",
     "uglifyjs-webpack-plugin": "1.2.5"
   },

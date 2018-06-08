@@ -120,6 +120,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return Controller; });
 /* harmony import */ var _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ControllerConfig */ "./src/ControllerConfig.ts");
+/* harmony import */ var csv_stringify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! csv-stringify */ "csv-stringify");
+/* harmony import */ var csv_stringify__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(csv_stringify__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 // import {IAuthRequest} from '../auth/auth';
@@ -249,55 +252,46 @@ var Controller = (function () {
         }
         return response;
     };
+    Controller.prototype.csvFile = function () {
+        var _this = this;
+        return function (req, res) {
+            _this.parseParams(req)
+                .then(function (parameters) {
+                return _this.handleRequest(parameters, req, res);
+            })
+                .then(function (result) {
+                res.setHeader('Content-disposition', 'attachment; filename=data.csv');
+                res.writeHead(200, {
+                    'Content-Type': 'text/csv'
+                });
+                csv_stringify__WEBPACK_IMPORTED_MODULE_1__(result, function (csv, err) {
+                    if (err) {
+                        Controller.errResponse(req, res, _this.constructor.name)({ code: 500, error: err });
+                    }
+                    else {
+                        res.send(csv);
+                    }
+                });
+            })
+                .catch(function (handlerError) {
+                handlerError = handlerError || {};
+                var code = handlerError.code || _this.failureCode;
+                var error = handlerError.error || handlerError.response || handlerError.message || handlerError;
+                console.log('Error ' + code + ' during request: ' + JSON.stringify(error) + ', ');
+                if (handlerError.stack) {
+                    console.log('stack: ' + handlerError.stack);
+                }
+                Controller.errResponse(req, res, _this.constructor.name)({ code: code, error: error, stack: handlerError.stack });
+            });
+        };
+    };
     Controller.prototype.jsonAPI = function () {
         var _this = this;
-        // const __this = this;
         return function (req, res) {
-            var parameters = {};
-            for (var paramIdx = 0; paramIdx < _this.requiredQueryParams.length; paramIdx++) {
-                var requiredParam = _this.requiredQueryParams[paramIdx];
-                var foundParam = req.query[requiredParam];
-                if (foundParam === undefined) {
-                    Controller.errResponse(req, res, _this.constructor.name)({
-                        code: HTTP_CODE_INPUT_ERROR,
-                        error: 'Required query parameter not found in request url: ' + requiredParam,
-                    });
-                    return;
-                }
-                else {
-                    parameters[requiredParam] = foundParam;
-                }
-            }
-            for (var paramIdx = 0; paramIdx < _this.requiredRouteParams.length; paramIdx++) {
-                var requiredParam = _this.requiredRouteParams[paramIdx];
-                var foundParam = req.params[requiredParam];
-                if (foundParam === undefined) {
-                    Controller.errResponse(req, res, _this.constructor.name)({
-                        code: HTTP_CODE_SERVER_ERROR,
-                        error: 'Required route parameter not mapped for request: ' + requiredParam,
-                    });
-                    return;
-                }
-                else {
-                    parameters[requiredParam] = foundParam;
-                }
-            }
-            for (var paramIdx = 0; paramIdx < _this.requiredBodyParams.length; paramIdx++) {
-                var requiredParam = _this.requiredBodyParams[paramIdx];
-                var foundParam = req.body[requiredParam];
-                if (foundParam === undefined) {
-                    Controller.errResponse(req, res, _this.constructor.name)({
-                        code: HTTP_CODE_INPUT_ERROR,
-                        error: 'Required body parameter not found in request body: ' + requiredParam,
-                    });
-                    return;
-                }
-                else {
-                    parameters[requiredParam] = foundParam;
-                }
-            }
-            var call = _this.handleRequest(parameters, req, res);
-            call
+            _this.parseParams(req)
+                .then(function (parameters) {
+                return _this.handleRequest(parameters, req, res);
+            })
                 .then(function (handlerResult) {
                 handlerResult = handlerResult || {};
                 var payload = handlerResult.code !== undefined
@@ -319,6 +313,49 @@ var Controller = (function () {
                 Controller.errResponse(req, res, _this.constructor.name)({ code: code, error: error, stack: handlerError.stack });
             });
         };
+    };
+    Controller.prototype.parseParams = function (req) {
+        var parameters = {};
+        for (var paramIdx = 0; paramIdx < this.requiredQueryParams.length; paramIdx++) {
+            var requiredParam = this.requiredQueryParams[paramIdx];
+            var foundParam = req.query[requiredParam];
+            if (foundParam === undefined) {
+                return Promise.reject({
+                    code: HTTP_CODE_INPUT_ERROR,
+                    error: 'Required query parameter not found in request url: ' + requiredParam,
+                });
+            }
+            else {
+                parameters[requiredParam] = foundParam;
+            }
+        }
+        for (var paramIdx = 0; paramIdx < this.requiredRouteParams.length; paramIdx++) {
+            var requiredParam = this.requiredRouteParams[paramIdx];
+            var foundParam = req.params[requiredParam];
+            if (foundParam === undefined) {
+                return Promise.reject({
+                    code: HTTP_CODE_SERVER_ERROR,
+                    error: 'Required route parameter not mapped for request: ' + requiredParam,
+                });
+            }
+            else {
+                parameters[requiredParam] = foundParam;
+            }
+        }
+        for (var paramIdx = 0; paramIdx < this.requiredBodyParams.length; paramIdx++) {
+            var requiredParam = this.requiredBodyParams[paramIdx];
+            var foundParam = req.body[requiredParam];
+            if (foundParam === undefined) {
+                return Promise.reject({
+                    code: HTTP_CODE_SERVER_ERROR,
+                    error: 'Required route parameter not mapped for request: ' + requiredParam,
+                });
+            }
+            else {
+                parameters[requiredParam] = foundParam;
+            }
+        }
+        return Promise.resolve(parameters);
     };
     return Controller;
 }());
@@ -362,6 +399,17 @@ var ControllerConfig = (function () {
 
 module.exports = __webpack_require__(/*! ./index.ts */"./index.ts");
 
+
+/***/ }),
+
+/***/ "csv-stringify":
+/*!********************************!*\
+  !*** external "csv-stringify" ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("csv-stringify");
 
 /***/ })
 

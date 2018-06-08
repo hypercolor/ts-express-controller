@@ -56,6 +56,12 @@
     "@types/express" "*"
     "@types/node" "*"
 
+"@types/csv-stringify@1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@types/csv-stringify/-/csv-stringify-1.4.2.tgz#3a71c6f508ae434339e2304d36bb00177e659d95"
+  dependencies:
+    "@types/node" "*"
+
 "@types/detect-indent@0.1.30":
   version "0.1.30"
   resolved "https://registry.yarnpkg.com/@types/detect-indent/-/detect-indent-0.1.30.tgz#dc682bb412b4e65ba098e70edad73b4833fb910d"
@@ -1978,6 +1984,29 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   dependencies:
     cssom "0.3.x"
 
+csv-generate@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/csv-generate/-/csv-generate-2.0.2.tgz#1c26c52be318f1f0b6435f8df3d1249fb1503f4b"
+
+csv-parse@^2.4.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-2.5.0.tgz#65748997ecc3719c594622db1b9ea0e2eb7d56bb"
+
+csv-stringify@3.0.0, csv-stringify@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-3.0.0.tgz#ed2b4eaae5a3be382309f7864168458970307d7f"
+  dependencies:
+    lodash.get "~4.4.2"
+
+csv@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/csv/-/csv-3.1.0.tgz#91ad8625e294bf37a5b366b84d01aa40b2d20f15"
+  dependencies:
+    csv-generate "^2.0.2"
+    csv-parse "^2.4.0"
+    csv-stringify "^3.0.0"
+    stream-transform "^1.0.2"
+
 currently-unhandled@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/currently-unhandled/-/currently-unhandled-0.4.1.tgz#988df33feab191ef799a61369dd76c17adf957ea"
@@ -2441,6 +2470,10 @@ expand-tilde@^2.0.0, expand-tilde@^2.0.2:
   resolved "https://registry.yarnpkg.com/expand-tilde/-/expand-tilde-2.0.2.tgz#97e801aa052df02454de46b02bf621642cdc8502"
   dependencies:
     homedir-polyfill "^1.0.1"
+
+express-csv@0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/express-csv/-/express-csv-0.6.0.tgz#db792d85b262207e561d6362ba39a1e681e3d503"
 
 express@4.16.3:
   version "4.16.3"
@@ -4298,6 +4331,10 @@ lodash._reinterpolate@~3.0.0:
 lodash.chunk@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/lodash.chunk/-/lodash.chunk-4.2.0.tgz#66e5ce1f76ed27b4303d8c6512e8d1216e8106bc"
+
+lodash.get@~4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
 
 lodash.map@^4.5.1:
   version "4.6.0"
@@ -6165,6 +6202,10 @@ stream-to-observable@^0.2.0:
   resolved "https://registry.yarnpkg.com/stream-to-observable/-/stream-to-observable-0.2.0.tgz#59d6ea393d87c2c0ddac10aa0d561bc6ba6f0e10"
   dependencies:
     any-observable "^0.2.0"
+
+stream-transform@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/stream-transform/-/stream-transform-1.0.2.tgz#47de4d15fbc29b7e2a7e54d25e99538876f114c1"
 
 strict-uri-encode@^1.0.0:
   version "1.1.0"

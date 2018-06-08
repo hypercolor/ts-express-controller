@@ -1,6 +1,9 @@
 import * as Bluebird from 'bluebird'
 import { Request, Response } from 'express'
 import { ControllerConfig } from './ControllerConfig'
+
+import * as csvStringify from 'csv-stringify'
+
 // import {IAuthRequest} from '../auth/auth';
 // import {IAuthRequest} from '../../util/auth';
 
@@ -221,53 +224,45 @@ export abstract class Controller {
     return response
   }
 
-  public jsonAPI() {
-    // const __this = this;
+  public csvFile() {
     return (req: Request, res: Response) => {
-      const parameters: IParamsObject = {}
-      for (let paramIdx = 0; paramIdx < this.requiredQueryParams.length; paramIdx++) {
-        const requiredParam = this.requiredQueryParams[paramIdx]
-        const foundParam: any = req.query[requiredParam]
-        if (foundParam === undefined) {
-          Controller.errResponse(req, res, this.constructor.name)({
-            code: HTTP_CODE_INPUT_ERROR,
-            error: 'Required query parameter not found in request url: ' + requiredParam,
+      this.parseParams(req)
+        .then(parameters => {
+          return this.handleRequest(parameters, req, res)
+        })
+        .then(result => {
+          res.setHeader('Content-disposition', 'attachment; filename=data.csv')
+          res.writeHead(200, {
+            'Content-Type': 'text/csv',
           })
-          return
-        } else {
-          parameters[requiredParam] = foundParam
-        }
-      }
-      for (let paramIdx = 0; paramIdx < this.requiredRouteParams.length; paramIdx++) {
-        const requiredParam = this.requiredRouteParams[paramIdx]
-        const foundParam = req.params[requiredParam]
-        if (foundParam === undefined) {
-          Controller.errResponse(req, res, this.constructor.name)({
-            code: HTTP_CODE_SERVER_ERROR,
-            error: 'Required route parameter not mapped for request: ' + requiredParam,
-          })
-          return
-        } else {
-          parameters[requiredParam] = foundParam
-        }
-      }
-      for (let paramIdx = 0; paramIdx < this.requiredBodyParams.length; paramIdx++) {
-        const requiredParam = this.requiredBodyParams[paramIdx]
-        const foundParam = req.body[requiredParam]
-        if (foundParam === undefined) {
-          Controller.errResponse(req, res, this.constructor.name)({
-            code: HTTP_CODE_INPUT_ERROR,
-            error: 'Required body parameter not found in request body: ' + requiredParam,
-          })
-          return
-        } else {
-          parameters[requiredParam] = foundParam
-        }
-      }
 
-      const call = this.handleRequest(parameters, req, res) as Promise<any>
+          csvStringify(result, (csv, err) => {
+            if (err) {
+              Controller.errResponse(req, res, this.constructor.name)({ code: 500, error: err })
+            } else {
+              res.send(csv)
+            }
+          })
+        })
+        .catch((handlerError: any) => {
+          handlerError = handlerError || {}
+          const code = handlerError.code || this.failureCode
+          const error = handlerError.error || handlerError.response || handlerError.message || handlerError
+          console.log('Error ' + code + ' during request: ' + JSON.stringify(error) + ', ')
+          if (handlerError.stack) {
+            console.log('stack: ' + handlerError.stack)
+          }
+          Controller.errResponse(req, res, this.constructor.name)({ code, error, stack: handlerError.stack })
+        })
+    }
+  }
 
-      call
+  public jsonAPI() {
+    return (req: Request, res: Response) => {
+      this.parseParams(req)
+        .then(parameters => {
+          return this.handleRequest(parameters, req, res)
+        })
         .then(handlerResult => {
           handlerResult = handlerResult || {}
           const payload =
@@ -293,4 +288,46 @@ export abstract class Controller {
   }
 
   protected abstract handleRequest(params: any, req: Request, res: Response): Promise<any> | Bluebird<any>
+
+  private parseParams(req: Request): Promise<IParamsObject> {
+    const parameters: IParamsObject = {}
+    for (let paramIdx = 0; paramIdx < this.requiredQueryParams.length; paramIdx++) {
+      const requiredParam = this.requiredQueryParams[paramIdx]
+      const foundParam: any = req.query[requiredParam]
+      if (foundParam === undefined) {
+        return Promise.reject({
+          code: HTTP_CODE_INPUT_ERROR,
+          error: 'Required query parameter not found in request url: ' + requiredParam,
+        })
+      } else {
+        parameters[requiredParam] = foundParam
+      }
+    }
+    for (let paramIdx = 0; paramIdx < this.requiredRouteParams.length; paramIdx++) {
+      const requiredParam = this.requiredRouteParams[paramIdx]
+      const foundParam = req.params[requiredParam]
+      if (foundParam === undefined) {
+        return Promise.reject({
+          code: HTTP_CODE_SERVER_ERROR,
+          error: 'Required route parameter not mapped for request: ' + requiredParam,
+        })
+      } else {
+        parameters[requiredParam] = foundParam
+      }
+    }
+    for (let paramIdx = 0; paramIdx < this.requiredBodyParams.length; paramIdx++) {
+      const requiredParam = this.requiredBodyParams[paramIdx]
+      const foundParam = req.body[requiredParam]
+      if (foundParam === undefined) {
+        return Promise.reject({
+          code: HTTP_CODE_SERVER_ERROR,
+          error: 'Required route parameter not mapped for request: ' + requiredParam,
+        })
+      } else {
+        parameters[requiredParam] = foundParam
+      }
+    }
+
+    return Promise.resolve(parameters)
+  }
 }

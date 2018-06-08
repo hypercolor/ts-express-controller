@@ -85,6 +85,7 @@ export abstract class Controller {
             * @returns {(params:any)=>undefined}
             */
         static okResponse(req: Request, res: Response, title: string): (params: IOkParams) => void;
+        csvFile(): (req: Request, res: Response) => void;
         jsonAPI(): (req: Request, res: Response) => void;
         protected abstract handleRequest(params: any, req: Request, res: Response): Promise<any> | Bluebird<any>;
 }
