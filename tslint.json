@@ -35,7 +35,7 @@
     ],
     "no-unnecessary-initializer": true,
     "no-magic-numbers": false,
-    "no-require-imports": true,
+    "no-require-imports": false,
     "no-duplicate-super": true,
     "no-boolean-literal-compare": true,
     "no-namespace": [

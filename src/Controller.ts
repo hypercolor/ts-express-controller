@@ -2,12 +2,7 @@ import * as Bluebird from 'bluebird'
 import { Request, Response } from 'express'
 import { ControllerConfig } from './ControllerConfig'
 
-import * as csvStringify from 'csv-stringify'
-
-// import {IAuthRequest} from '../auth/auth';
-// import {IAuthRequest} from '../../util/auth';
-
-// const Package = require('../../../package.json');
+require('express-csv')
 
 const isNumeric = (n: any) => {
   return !isNaN(parseFloat(n)) && isFinite(n)
@@ -231,18 +226,21 @@ export abstract class Controller {
           return this.handleRequest(parameters, req, res)
         })
         .then(result => {
-          res.setHeader('Content-disposition', 'attachment; filename=data.csv')
-          res.writeHead(200, {
-            'Content-Type': 'text/csv',
-          })
+          ;(res as any).csv(result)
 
-          csvStringify(result, (csv, err) => {
-            if (err) {
-              Controller.errResponse(req, res, this.constructor.name)({ code: 500, error: err })
-            } else {
-              res.send(csv)
-            }
-          })
+          // res.setHeader('Content-disposition', 'attachment; filename=data.csv')
+          // res.writeHead(200, {
+          //   'Content-Type': 'text/csv',
+          // })
+          //
+          // csvStringify(result, (csv, err) => {
+          //   if (err) {
+          //     Controller.errResponse(req, res, this.constructor.name)({ code: 500, error: err })
+          //   } else {
+          //     console.log('Sending csv to response: ' + csv);
+          //     res.send(csv)
+          //   }
+          // })
         })
         .catch((handlerError: any) => {
           handlerError = handlerError || {}

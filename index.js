@@ -120,14 +120,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return Controller; });
 /* harmony import */ var _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ControllerConfig */ "./src/ControllerConfig.ts");
-/* harmony import */ var csv_stringify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! csv-stringify */ "csv-stringify");
-/* harmony import */ var csv_stringify__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(csv_stringify__WEBPACK_IMPORTED_MODULE_1__);
 
 
-
-// import {IAuthRequest} from '../auth/auth';
-// import {IAuthRequest} from '../../util/auth';
-// const Package = require('../../../package.json');
+__webpack_require__(/*! express-csv */ "express-csv");
 var isNumeric = function (n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 };
@@ -260,18 +255,20 @@ var Controller = (function () {
                 return _this.handleRequest(parameters, req, res);
             })
                 .then(function (result) {
-                res.setHeader('Content-disposition', 'attachment; filename=data.csv');
-                res.writeHead(200, {
-                    'Content-Type': 'text/csv'
-                });
-                csv_stringify__WEBPACK_IMPORTED_MODULE_1__(result, function (csv, err) {
-                    if (err) {
-                        Controller.errResponse(req, res, _this.constructor.name)({ code: 500, error: err });
-                    }
-                    else {
-                        res.send(csv);
-                    }
-                });
+                res.csv(result);
+                // res.setHeader('Content-disposition', 'attachment; filename=data.csv')
+                // res.writeHead(200, {
+                //   'Content-Type': 'text/csv',
+                // })
+                //
+                // csvStringify(result, (csv, err) => {
+                //   if (err) {
+                //     Controller.errResponse(req, res, this.constructor.name)({ code: 500, error: err })
+                //   } else {
+                //     console.log('Sending csv to response: ' + csv);
+                //     res.send(csv)
+                //   }
+                // })
             })
                 .catch(function (handlerError) {
                 handlerError = handlerError || {};
@@ -402,14 +399,14 @@ module.exports = __webpack_require__(/*! ./index.ts */"./index.ts");
 
 /***/ }),
 
-/***/ "csv-stringify":
-/*!********************************!*\
-  !*** external "csv-stringify" ***!
-  \********************************/
+/***/ "express-csv":
+/*!******************************!*\
+  !*** external "express-csv" ***!
+  \******************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = require("csv-stringify");
+module.exports = require("express-csv");
 
 /***/ })
 
