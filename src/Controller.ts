@@ -226,7 +226,14 @@ export abstract class Controller {
           return this.handleRequest(parameters, req, res)
         })
         .then(result => {
-          ;(res as any).csv(result)
+          if (result.constructor !== Array) {
+            Controller.errResponse(req, res, this.constructor.name)({
+              code: 500,
+              error: 'CSV route emitted non-array result: ' + result.constructor.name,
+            })
+          } else {
+            ;(res as any).csv(result)
+          }
 
           // res.setHeader('Content-disposition', 'attachment; filename=data.csv')
           // res.writeHead(200, {
@@ -319,7 +326,7 @@ export abstract class Controller {
       if (foundParam === undefined) {
         return Promise.reject({
           code: HTTP_CODE_SERVER_ERROR,
-          error: 'Required route parameter not mapped for request: ' + requiredParam,
+          error: 'Required body parameter not included with request: ' + requiredParam,
         })
       } else {
         parameters[requiredParam] = foundParam
