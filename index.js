@@ -214,6 +214,7 @@ var Controller = (function () {
         var response = {
             code: code,
             success: success,
+            time: new Date().toISOString(),
             server: {
                 name: _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__["ControllerConfig"].packageConfig.packageName,
                 description: _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__["ControllerConfig"].packageConfig.packageDescription,
@@ -256,9 +257,13 @@ var Controller = (function () {
             })
                 .then(function (result) {
                 if (result.constructor !== Array) {
-                    Controller.errResponse(req, res, _this.constructor.name)({ code: 500, error: 'CSV route emitted non-array result: ' + result.constructor.name });
+                    Controller.errResponse(req, res, _this.constructor.name)({
+                        code: 500,
+                        error: 'CSV route emitted non-array result: ' + result.constructor.name,
+                    });
                 }
                 else {
+                    ;
                     res.csv(result);
                 }
                 // res.setHeader('Content-disposition', 'attachment; filename=data.csv')

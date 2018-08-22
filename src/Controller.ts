@@ -30,6 +30,7 @@ export interface IResponseEnvelope {
   success: boolean
   server: IServerDetails
   request: IRequestDetails
+  time: string
   data?: object
   error?: string
   stack?: string
@@ -186,6 +187,7 @@ export abstract class Controller {
     const response: IResponseEnvelope = {
       code,
       success,
+      time: new Date().toISOString(),
       server: {
         name: ControllerConfig.packageConfig.packageName,
         description: ControllerConfig.packageConfig.packageDescription,

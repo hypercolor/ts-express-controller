@@ -22,6 +22,7 @@ export interface IResponseEnvelope {
         success: boolean;
         server: IServerDetails;
         request: IRequestDetails;
+        time: string;
         data?: object;
         error?: string;
         stack?: string;
