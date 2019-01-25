@@ -142,6 +142,10 @@ export abstract class Controller {
             console.log('Stack: ' + error.stack.replace(/\\n/g, '\n'))
           }
         }
+
+        if (req.body) {
+          console.log('Request body for error was: ' + JSON.stringify(req.body, null, 2))
+        }
       }
 
       res.status(code).json(response)
