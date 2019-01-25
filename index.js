@@ -106,7 +106,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 /***/ }),
 
 /***/ "./src/Controller.ts":
@@ -119,7 +118,9 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return Controller; });
-/* harmony import */ var _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ControllerConfig */ "./src/ControllerConfig.ts");
+/* harmony import */ var hc_utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! hc-utilities */ "hc-utilities");
+/* harmony import */ var hc_utilities__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(hc_utilities__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _ControllerConfig__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ControllerConfig */ "./src/ControllerConfig.ts");
 
 
 __webpack_require__(/*! express-csv */ "express-csv");
@@ -135,7 +136,7 @@ var HTTP_CODE_OK = 200;
  *
  * @class BaseRoute
  */
-var Controller = (function () {
+var Controller = /** @class */ (function () {
     /**
      * Constructor
      *
@@ -216,10 +217,10 @@ var Controller = (function () {
             success: success,
             time: new Date().toISOString(),
             server: {
-                name: _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__["ControllerConfig"].packageConfig.packageName,
-                description: _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__["ControllerConfig"].packageConfig.packageDescription,
+                name: _ControllerConfig__WEBPACK_IMPORTED_MODULE_1__["ControllerConfig"].packageConfig.packageName,
+                description: _ControllerConfig__WEBPACK_IMPORTED_MODULE_1__["ControllerConfig"].packageConfig.packageDescription,
                 env: envDescriptor,
-                version: _ControllerConfig__WEBPACK_IMPORTED_MODULE_0__["ControllerConfig"].packageConfig.packageVersion,
+                version: _ControllerConfig__WEBPACK_IMPORTED_MODULE_1__["ControllerConfig"].packageConfig.packageVersion,
             },
             request: {
                 url: req.originalUrl,
@@ -239,6 +240,7 @@ var Controller = (function () {
                 response.error = error;
                 response.stack = stack;
             }
+            response.breadcrumb = hc_utilities__WEBPACK_IMPORTED_MODULE_0__["Keygen"].uid(6).toUpperCase();
         }
         if (meta) {
             response.meta = meta;
@@ -381,8 +383,7 @@ var Controller = (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ControllerConfig", function() { return ControllerConfig; });
-
-var ControllerConfig = (function () {
+var ControllerConfig = /** @class */ (function () {
     function ControllerConfig() {
     }
     ControllerConfig.packageConfig = {
@@ -417,6 +418,17 @@ module.exports = __webpack_require__(/*! ./index.ts */"./index.ts");
 /***/ (function(module, exports) {
 
 module.exports = require("express-csv");
+
+/***/ }),
+
+/***/ "hc-utilities":
+/*!*******************************!*\
+  !*** external "hc-utilities" ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("hc-utilities");
 
 /***/ })
 

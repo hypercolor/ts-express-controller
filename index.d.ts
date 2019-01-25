@@ -25,6 +25,7 @@ export interface IResponseEnvelope {
         time: string;
         data?: object;
         error?: string;
+        breadcrumb?: string;
         stack?: string;
         meta?: any;
         message?: string;
