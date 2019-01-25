@@ -1,5 +1,6 @@
 import * as Bluebird from 'bluebird'
 import { Request, Response } from 'express'
+import { Keygen } from 'hc-utilities'
 import { ControllerConfig } from './ControllerConfig'
 
 require('express-csv')
@@ -33,6 +34,7 @@ export interface IResponseEnvelope {
   time: string
   data?: object
   error?: string
+  breadcrumb?: string
   stack?: string
   meta?: any
   message?: string
@@ -211,6 +213,7 @@ export abstract class Controller {
         response.error = error
         response.stack = stack
       }
+      response.breadcrumb = Keygen.uid(6).toUpperCase()
     }
     if (meta) {
       response.meta = meta
