@@ -1,4 +1,3 @@
-import * as Bluebird from 'bluebird'
 import { Request, Response } from 'express'
 import { Keygen } from 'hc-utilities'
 import { ControllerConfig } from './ControllerConfig'
@@ -301,7 +300,7 @@ export abstract class Controller {
     }
   }
 
-  protected abstract handleRequest(params: any, req: Request, res: Response): Promise<any> | Bluebird<any>
+  protected abstract async handleRequest(params: any, req: Request, res: Response): Promise<any>
 
   private parseParams(req: Request): Promise<IParamsObject> {
     const parameters: IParamsObject = {}
