@@ -91,17 +91,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /*!******************!*\
   !*** ./index.ts ***!
   \******************/
-/*! exports provided: Controller, ControllerConfig */
+/*! exports provided: Controller */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _src_Controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/Controller */ "./src/Controller.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return _src_Controller__WEBPACK_IMPORTED_MODULE_0__["Controller"]; });
-
-/* harmony import */ var _src_ControllerConfig__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/ControllerConfig */ "./src/ControllerConfig.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ControllerConfig", function() { return _src_ControllerConfig__WEBPACK_IMPORTED_MODULE_1__["ControllerConfig"]; });
-
 
 
 
@@ -120,8 +116,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return Controller; });
 /* harmony import */ var hc_utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! hc-utilities */ "hc-utilities");
 /* harmony import */ var hc_utilities__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(hc_utilities__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _ControllerConfig__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ControllerConfig */ "./src/ControllerConfig.ts");
-
 
 __webpack_require__(/*! express-csv */ "express-csv");
 var isNumeric = function (n) {
@@ -153,6 +147,9 @@ var Controller = /** @class */ (function () {
         this.successCode = config.okCode || HTTP_CODE_OK;
         this.failureCode = config.failCode || HTTP_CODE_SERVER_ERROR;
     }
+    Controller.init = function (config) {
+        Object.assign(this.frameworkConfig, config);
+    };
     /**
      * errResponse
      *
@@ -162,6 +159,7 @@ var Controller = /** @class */ (function () {
      * @returns {(params:any)=>undefined}
      */
     Controller.errResponse = function (req, res, title) {
+        var _this = this;
         return function (params) {
             var code = HTTP_CODE_SERVER_ERROR;
             var meta;
@@ -172,8 +170,8 @@ var Controller = /** @class */ (function () {
                 meta = 'Error code: ' + params.code;
             }
             var response = Controller.responseEnvelope(req, title, code, false, undefined, params.error || params, params.stack, meta, params.message);
-            if ((code === HTTP_CODE_SERVER_ERROR && process.env.INSTRUMENT_ERRORS_500 === 'true') ||
-                process.env.INSTRUMENT_ERRORS_ALL === 'true') {
+            if ((code === HTTP_CODE_SERVER_ERROR && _this.frameworkConfig.instrument500Errors) ||
+                _this.frameworkConfig.instrumentAllErrors) {
                 console.log(code + ' error: ' + JSON.stringify(response, null, 2));
                 if (response.stack !== undefined) {
                     console.log('Stack: ' + response.stack.replace(/\\n/g, '\n'));
@@ -184,7 +182,7 @@ var Controller = /** @class */ (function () {
                         console.log('Stack: ' + error.stack.replace(/\\n/g, '\n'));
                     }
                 }
-                if (req.body) {
+                if (req.body && _this.frameworkConfig.instrumentErrorRequestBodies && _this.frameworkConfig.instrumentErrorRequestBodiesRouteBlacklist.indexOf(req.url) === -1) {
                     console.log('Request body for error was: ' + JSON.stringify(req.body, null, 2));
                 }
             }
@@ -214,16 +212,15 @@ var Controller = /** @class */ (function () {
         };
     };
     Controller.responseEnvelope = function (req, routeTitle, code, success, data, error, stack, meta, message) {
-        var envDescriptor = process.env.ENVIRONMENT_DESCRIPTOR || 'unknown';
         var response = {
             code: code,
             success: success,
             time: new Date().toISOString(),
             server: {
-                name: _ControllerConfig__WEBPACK_IMPORTED_MODULE_1__["ControllerConfig"].packageConfig.packageName,
-                description: _ControllerConfig__WEBPACK_IMPORTED_MODULE_1__["ControllerConfig"].packageConfig.packageDescription,
-                env: envDescriptor,
-                version: _ControllerConfig__WEBPACK_IMPORTED_MODULE_1__["ControllerConfig"].packageConfig.packageVersion,
+                name: this.frameworkConfig.packageConfig.packageName,
+                description: this.frameworkConfig.packageConfig.packageDescription,
+                env: this.frameworkConfig.environmentDescriptor,
+                version: this.frameworkConfig.packageConfig.packageVersion,
             },
             request: {
                 url: req.originalUrl,
@@ -268,7 +265,6 @@ var Controller = /** @class */ (function () {
                     });
                 }
                 else {
-                    ;
                     res.csv(result);
                 }
                 // res.setHeader('Content-disposition', 'attachment; filename=data.csv')
@@ -369,32 +365,19 @@ var Controller = /** @class */ (function () {
         }
         return Promise.resolve(parameters);
     };
-    return Controller;
-}());
-
-
-
-/***/ }),
-
-/***/ "./src/ControllerConfig.ts":
-/*!*********************************!*\
-  !*** ./src/ControllerConfig.ts ***!
-  \*********************************/
-/*! exports provided: ControllerConfig */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ControllerConfig", function() { return ControllerConfig; });
-var ControllerConfig = /** @class */ (function () {
-    function ControllerConfig() {
-    }
-    ControllerConfig.packageConfig = {
-        packageName: 'Default Package Name',
-        packageDescription: 'Default Package Description',
-        packageVersion: 'Default Package Version',
+    Controller.frameworkConfig = {
+        instrumentAllErrors: false,
+        instrument500Errors: true,
+        instrumentErrorRequestBodies: false,
+        instrumentErrorRequestBodiesRouteBlacklist: [],
+        environmentDescriptor: 'env',
+        packageConfig: {
+            packageName: 'Default Package Name',
+            packageDescription: 'Default Package Description',
+            packageVersion: 'Default Package Version',
+        }
     };
-    return ControllerConfig;
+    return Controller;
 }());
 
 

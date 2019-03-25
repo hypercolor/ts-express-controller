@@ -49,6 +49,30 @@ export interface IRouteConfig {
 export interface IParamsObject {
         [key: string]: any;
 }
+export interface IControllerFrameworkConfig {
+        instrumentAllErrors: boolean;
+        instrument500Errors: boolean;
+        instrumentErrorRequestBodies: boolean;
+        instrumentErrorRequestBodiesRouteBlacklist: Array<string>;
+        environmentDescriptor: string;
+        packageConfig: {
+                packageName: string;
+                packageDescription: string;
+                packageVersion: string;
+        };
+}
+export interface IControllerFrameworkConfigParams {
+        instrumentAllErrors?: boolean;
+        instrument500Errors?: boolean;
+        instrumentErrorRequestBodies?: boolean;
+        instrumentErrorRequestBodiesRouteBlacklist?: Array<string>;
+        environmentDescriptor?: string;
+        packageConfig?: {
+                packageName: string;
+                packageDescription: string;
+                packageVersion: string;
+        };
+}
 /**
     * Constructor
     *
@@ -67,6 +91,7 @@ export abstract class Controller {
             * @constructor
             */
         constructor(config?: IRouteConfig);
+        static init(config: IControllerFrameworkConfigParams): void;
         /**
             * errResponse
             *
@@ -88,13 +113,5 @@ export abstract class Controller {
         csvFile(): (req: Request, res: Response) => void;
         jsonAPI(): (req: Request, res: Response) => void;
         protected abstract handleRequest(params: any, req: Request, res: Response): Promise<any>;
-}
-
-export class ControllerConfig {
-    static packageConfig: {
-        packageName: string;
-        packageDescription: string;
-        packageVersion: string;
-    };
 }
 

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { Keygen } from 'hc-utilities'
-import { ControllerConfig } from './ControllerConfig'
 
 require('express-csv')
 
@@ -64,6 +63,32 @@ export interface IParamsObject {
   [key: string]: any
 }
 
+export interface IControllerFrameworkConfig {
+  instrumentAllErrors: boolean
+  instrument500Errors: boolean
+  instrumentErrorRequestBodies: boolean
+  instrumentErrorRequestBodiesRouteBlacklist: Array<string>
+  environmentDescriptor: string
+  packageConfig: {
+    packageName: string
+    packageDescription: string
+    packageVersion: string
+  }
+}
+
+export interface IControllerFrameworkConfigParams {
+  instrumentAllErrors?: boolean
+  instrument500Errors?: boolean
+  instrumentErrorRequestBodies?: boolean
+  instrumentErrorRequestBodiesRouteBlacklist?: Array<string>
+  environmentDescriptor?: string
+  packageConfig?: {
+    packageName: string
+    packageDescription: string
+    packageVersion: string
+  }
+}
+
 const HTTP_CODE_MAX = 600
 const HTTP_CODE_SERVER_ERROR = 500
 const HTTP_CODE_INPUT_ERROR = 400
@@ -75,6 +100,19 @@ const HTTP_CODE_OK = 200
  * @class BaseRoute
  */
 export abstract class Controller {
+  private static frameworkConfig: IControllerFrameworkConfig = {
+    instrumentAllErrors: false,
+    instrument500Errors: true,
+    instrumentErrorRequestBodies: false,
+    instrumentErrorRequestBodiesRouteBlacklist: [],
+    environmentDescriptor: 'env',
+    packageConfig: {
+      packageName: 'Default Package Name',
+      packageDescription: 'Default Package Description',
+      packageVersion: 'Default Package Version',
+    },
+  }
+
   protected requiredQueryParams: Array<string>
   protected requiredRouteParams: Array<string>
   protected requiredBodyParams: Array<string>
@@ -95,6 +133,11 @@ export abstract class Controller {
     this.successCode = config.okCode || HTTP_CODE_OK
     this.failureCode = config.failCode || HTTP_CODE_SERVER_ERROR
   }
+
+  public static init(config: IControllerFrameworkConfigParams) {
+    Object.assign(this.frameworkConfig, config)
+  }
+
   /**
    * errResponse
    *
@@ -126,8 +169,8 @@ export abstract class Controller {
       )
 
       if (
-        (code === HTTP_CODE_SERVER_ERROR && process.env.INSTRUMENT_ERRORS_500 === 'true') ||
-        process.env.INSTRUMENT_ERRORS_ALL === 'true'
+        (code === HTTP_CODE_SERVER_ERROR && this.frameworkConfig.instrument500Errors) ||
+        this.frameworkConfig.instrumentAllErrors
       ) {
         console.log(code + ' error: ' + JSON.stringify(response, null, 2))
 
@@ -142,7 +185,11 @@ export abstract class Controller {
           }
         }
 
-        if (req.body) {
+        if (
+          req.body &&
+          this.frameworkConfig.instrumentErrorRequestBodies &&
+          this.frameworkConfig.instrumentErrorRequestBodiesRouteBlacklist.indexOf(req.url) === -1
+        ) {
           console.log('Request body for error was: ' + JSON.stringify(req.body, null, 2))
         }
       }
@@ -188,16 +235,15 @@ export abstract class Controller {
     meta?: any,
     message?: string
   ) {
-    const envDescriptor = process.env.ENVIRONMENT_DESCRIPTOR || 'unknown'
     const response: IResponseEnvelope = {
       code,
       success,
       time: new Date().toISOString(),
       server: {
-        name: ControllerConfig.packageConfig.packageName,
-        description: ControllerConfig.packageConfig.packageDescription,
-        env: envDescriptor,
-        version: ControllerConfig.packageConfig.packageVersion,
+        name: this.frameworkConfig.packageConfig.packageName,
+        description: this.frameworkConfig.packageConfig.packageDescription,
+        env: this.frameworkConfig.environmentDescriptor,
+        version: this.frameworkConfig.packageConfig.packageVersion,
       },
       request: {
         url: req.originalUrl,
