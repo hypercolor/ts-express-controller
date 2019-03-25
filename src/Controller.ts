@@ -64,6 +64,7 @@ export interface IParamsObject {
 }
 
 export interface IControllerFrameworkConfig {
+  instrumentAllRequests: boolean
   instrumentAllErrors: boolean
   instrument500Errors: boolean
   instrumentErrorRequestBodies: boolean
@@ -77,6 +78,7 @@ export interface IControllerFrameworkConfig {
 }
 
 export interface IControllerFrameworkConfigParams {
+  instrumentAllRequests?: boolean
   instrumentAllErrors?: boolean
   instrument500Errors?: boolean
   instrumentErrorRequestBodies?: boolean
@@ -101,6 +103,7 @@ const HTTP_CODE_OK = 200
  */
 export abstract class Controller {
   private static frameworkConfig: IControllerFrameworkConfig = {
+    instrumentAllRequests: false,
     instrumentAllErrors: false,
     instrument500Errors: true,
     instrumentErrorRequestBodies: false,
@@ -322,6 +325,7 @@ export abstract class Controller {
 
   public jsonAPI() {
     return (req: Request, res: Response) => {
+      const start = new Date()
       this.parseParams(req)
         .then(parameters => {
           return this.handleRequest(parameters, req, res)
@@ -335,6 +339,12 @@ export abstract class Controller {
                   code: this.successCode,
                   data: handlerResult,
                 }
+
+          const duration = (new Date().getTime() - start.getTime()).toFixed(2)
+          if (Controller.frameworkConfig.instrumentAllRequests) {
+            console.log(req.method + ' ' + req.url + ' ' + duration + ' ms, status=' + payload.code)
+          }
+
           Controller.okResponse(req, res, this.constructor.name)(payload)
         })
         .catch((handlerError: any) => {

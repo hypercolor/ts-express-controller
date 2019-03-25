@@ -50,6 +50,7 @@ export interface IParamsObject {
         [key: string]: any;
 }
 export interface IControllerFrameworkConfig {
+        instrumentAllRequests: boolean;
         instrumentAllErrors: boolean;
         instrument500Errors: boolean;
         instrumentErrorRequestBodies: boolean;
@@ -62,6 +63,7 @@ export interface IControllerFrameworkConfig {
         };
 }
 export interface IControllerFrameworkConfigParams {
+        instrumentAllRequests?: boolean;
         instrumentAllErrors?: boolean;
         instrument500Errors?: boolean;
         instrumentErrorRequestBodies?: boolean;

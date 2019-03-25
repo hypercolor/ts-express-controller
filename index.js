@@ -302,6 +302,7 @@ var Controller = /** @class */ (function () {
     Controller.prototype.jsonAPI = function () {
         var _this = this;
         return function (req, res) {
+            var start = new Date();
             _this.parseParams(req)
                 .then(function (parameters) {
                 return _this.handleRequest(parameters, req, res);
@@ -314,6 +315,10 @@ var Controller = /** @class */ (function () {
                         code: _this.successCode,
                         data: handlerResult,
                     };
+                var duration = (new Date().getTime() - start.getTime()).toFixed(2);
+                if (Controller.frameworkConfig.instrumentAllRequests) {
+                    console.log(req.method + ' ' + req.url + ' ' + duration + ' ms, status=' + payload.code);
+                }
                 Controller.okResponse(req, res, _this.constructor.name)(payload);
             })
                 .catch(function (handlerError) {
@@ -372,6 +377,7 @@ var Controller = /** @class */ (function () {
         return Promise.resolve(parameters);
     };
     Controller.frameworkConfig = {
+        instrumentAllRequests: false,
         instrumentAllErrors: false,
         instrument500Errors: true,
         instrumentErrorRequestBodies: false,
