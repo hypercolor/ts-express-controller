@@ -1,1 +1,1 @@
-export { Controller } from './src/Controller'
+export { Controller, IControllerFrameworkConfig } from './src/Controller'

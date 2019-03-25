@@ -134,8 +134,12 @@ export abstract class Controller {
     this.failureCode = config.failCode || HTTP_CODE_SERVER_ERROR
   }
 
-  public static init(config: IControllerFrameworkConfigParams) {
+  public static configure(config: IControllerFrameworkConfigParams) {
     Object.assign(this.frameworkConfig, config)
+  }
+
+  public static getConfiguration(): IControllerFrameworkConfig {
+    return this.frameworkConfig
   }
 
   /**

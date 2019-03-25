@@ -91,7 +91,8 @@ export abstract class Controller {
             * @constructor
             */
         constructor(config?: IRouteConfig);
-        static init(config: IControllerFrameworkConfigParams): void;
+        static configure(config: IControllerFrameworkConfigParams): void;
+        static getConfiguration(): IControllerFrameworkConfig;
         /**
             * errResponse
             *

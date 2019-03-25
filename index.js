@@ -147,8 +147,11 @@ var Controller = /** @class */ (function () {
         this.successCode = config.okCode || HTTP_CODE_OK;
         this.failureCode = config.failCode || HTTP_CODE_SERVER_ERROR;
     }
-    Controller.init = function (config) {
+    Controller.configure = function (config) {
         Object.assign(this.frameworkConfig, config);
+    };
+    Controller.getConfiguration = function () {
+        return this.frameworkConfig;
     };
     /**
      * errResponse
@@ -182,7 +185,9 @@ var Controller = /** @class */ (function () {
                         console.log('Stack: ' + error.stack.replace(/\\n/g, '\n'));
                     }
                 }
-                if (req.body && _this.frameworkConfig.instrumentErrorRequestBodies && _this.frameworkConfig.instrumentErrorRequestBodiesRouteBlacklist.indexOf(req.url) === -1) {
+                if (req.body &&
+                    _this.frameworkConfig.instrumentErrorRequestBodies &&
+                    _this.frameworkConfig.instrumentErrorRequestBodiesRouteBlacklist.indexOf(req.url) === -1) {
                     console.log('Request body for error was: ' + JSON.stringify(req.body, null, 2));
                 }
             }
@@ -265,6 +270,7 @@ var Controller = /** @class */ (function () {
                     });
                 }
                 else {
+                    ;
                     res.csv(result);
                 }
                 // res.setHeader('Content-disposition', 'attachment; filename=data.csv')
@@ -375,7 +381,7 @@ var Controller = /** @class */ (function () {
             packageName: 'Default Package Name',
             packageDescription: 'Default Package Description',
             packageVersion: 'Default Package Version',
-        }
+        },
     };
     return Controller;
 }());
