@@ -1,23 +1,23 @@
-import { Request, Response } from 'express'
-import { Keygen } from 'hc-utilities'
+import { Request, Response } from 'express';
+import { Keygen } from 'hc-utilities';
 
-require('express-csv')
+require('express-csv');
 
 const isNumeric = (n: any) => {
-  return !isNaN(parseFloat(n)) && isFinite(n)
-}
+  return !isNaN(parseFloat(n)) && isFinite(n);
+};
 
 export interface IServerDetails {
-  name: string
-  description: string
-  env: string
-  version: string
+  name: string;
+  description: string;
+  env: string;
+  version: string;
 }
 
 export interface IRequestDetails {
-  url: string
-  method: string
-  route: string
+  url: string;
+  method: string;
+  route: string;
 }
 
 // export interface IResponse extends Response {
@@ -25,76 +25,76 @@ export interface IRequestDetails {
 // }
 
 export interface IResponseEnvelope {
-  code: number
-  success: boolean
-  server: IServerDetails
-  request: IRequestDetails
-  time: string
-  data?: object
-  error?: string
-  breadcrumb?: string
-  stack?: string
-  meta?: any
-  message?: string
+  code: number;
+  success: boolean;
+  server: IServerDetails;
+  request: IRequestDetails;
+  time: string;
+  data?: object;
+  error?: string;
+  breadcrumb?: string;
+  stack?: string;
+  meta?: any;
+  message?: string;
 }
 
 export interface IErrorParams {
-  code: number
-  error?: string | object | Error
-  stack?: string
-  message?: string
+  code: number;
+  error?: string | object | Error;
+  stack?: string;
+  message?: string;
 }
 
 export interface IOkParams {
-  code: number
-  data?: object
-  message?: string
+  code: number;
+  data?: object;
+  message?: string;
 }
 
 export interface IRouteConfig {
-  queryParams?: Array<string>
-  routeParams?: Array<string>
-  bodyParams?: Array<string>
-  okCode?: number
-  failCode?: number
+  queryParams?: Array<string>;
+  routeParams?: Array<string>;
+  bodyParams?: Array<string>;
+  okCode?: number;
+  failCode?: number;
 }
 
 export interface IParamsObject {
-  [key: string]: any
+  [key: string]: any;
 }
 
 export interface IControllerFrameworkConfig {
-  instrumentAllRequests: boolean
-  instrumentAllErrors: boolean
-  instrument500Errors: boolean
-  instrumentErrorRequestBodies: boolean
-  instrumentErrorRequestBodiesRouteBlacklist: Array<string>
-  environmentDescriptor: string
+  instrumentAllRequests: boolean;
+  instrumentAllErrors: boolean;
+  instrument500Errors: boolean;
+  instrumentErrorRequestBodies: boolean;
+  instrumentErrorRequestBodiesRouteBlacklist: Array<string>;
+  environmentDescriptor: string;
   packageConfig: {
-    packageName: string
-    packageDescription: string
-    packageVersion: string
-  }
+    packageName: string;
+    packageDescription: string;
+    packageVersion: string;
+  };
 }
 
 export interface IControllerFrameworkConfigParams {
-  instrumentAllRequests?: boolean
-  instrumentAllErrors?: boolean
-  instrument500Errors?: boolean
-  instrumentErrorRequestBodies?: boolean
-  instrumentErrorRequestBodiesRouteBlacklist?: Array<string>
-  environmentDescriptor?: string
+  instrumentAllRequests?: boolean;
+  instrumentAllErrors?: boolean;
+  instrument500Errors?: boolean;
+  instrumentErrorRequestBodies?: boolean;
+  instrumentErrorRequestBodiesRouteBlacklist?: Array<string>;
+  environmentDescriptor?: string;
   packageConfig?: {
-    packageName: string
-    packageDescription: string
-    packageVersion: string
-  }
+    packageName: string;
+    packageDescription: string;
+    packageVersion: string;
+  };
 }
 
-const HTTP_CODE_MAX = 600
-const HTTP_CODE_SERVER_ERROR = 500
-const HTTP_CODE_INPUT_ERROR = 400
-const HTTP_CODE_OK = 200
+const HTTP_CODE_MAX = 600;
+const HTTP_CODE_SERVER_ERROR = 500;
+const HTTP_CODE_INPUT_ERROR = 400;
+const HTTP_CODE_OK = 200;
 
 /**
  * Constructor
@@ -114,13 +114,13 @@ export abstract class Controller {
       packageDescription: 'Default Package Description',
       packageVersion: 'Default Package Version',
     },
-  }
+  };
 
-  protected requiredQueryParams: Array<string>
-  protected requiredRouteParams: Array<string>
-  protected requiredBodyParams: Array<string>
-  protected successCode = HTTP_CODE_OK
-  protected failureCode = HTTP_CODE_SERVER_ERROR
+  protected requiredQueryParams: Array<string>;
+  protected requiredRouteParams: Array<string>;
+  protected requiredBodyParams: Array<string>;
+  protected successCode = HTTP_CODE_OK;
+  protected failureCode = HTTP_CODE_SERVER_ERROR;
 
   /**
    * Constructor
@@ -129,20 +129,20 @@ export abstract class Controller {
    * @constructor
    */
   constructor(config?: IRouteConfig) {
-    config = config || {}
-    this.requiredQueryParams = config.queryParams || []
-    this.requiredRouteParams = config.routeParams || []
-    this.requiredBodyParams = config.bodyParams || []
-    this.successCode = config.okCode || HTTP_CODE_OK
-    this.failureCode = config.failCode || HTTP_CODE_SERVER_ERROR
+    config = config || {};
+    this.requiredQueryParams = config.queryParams || [];
+    this.requiredRouteParams = config.routeParams || [];
+    this.requiredBodyParams = config.bodyParams || [];
+    this.successCode = config.okCode || HTTP_CODE_OK;
+    this.failureCode = config.failCode || HTTP_CODE_SERVER_ERROR;
   }
 
   public static configure(config: IControllerFrameworkConfigParams) {
-    Object.assign(this.frameworkConfig, config)
+    Object.assign(this.frameworkConfig, config);
   }
 
   public static getConfiguration(): IControllerFrameworkConfig {
-    return this.frameworkConfig
+    return this.frameworkConfig;
   }
 
   /**
@@ -155,12 +155,12 @@ export abstract class Controller {
    */
   public static errResponse(req: Request, res: Response, title: string) {
     return (params: IErrorParams) => {
-      let code = HTTP_CODE_SERVER_ERROR
-      let meta
+      let code = HTTP_CODE_SERVER_ERROR;
+      let meta;
       if (params.code && isNumeric(params.code) && params.code < HTTP_CODE_MAX) {
-        code = params.code
+        code = params.code;
       } else {
-        meta = 'Error code: ' + params.code
+        meta = 'Error code: ' + params.code;
       }
 
       const response = Controller.responseEnvelope(
@@ -173,22 +173,22 @@ export abstract class Controller {
         params.stack,
         meta,
         params.message
-      )
+      );
 
       if (
         (code === HTTP_CODE_SERVER_ERROR && this.frameworkConfig.instrument500Errors) ||
         this.frameworkConfig.instrumentAllErrors
       ) {
-        console.log(code + ' error: ' + JSON.stringify(response, null, 2))
+        console.log(code + ' error: ' + JSON.stringify(response, null, 2));
 
         if (response.stack !== undefined) {
-          console.log('Stack: ' + response.stack.replace(/\\n/g, '\n'))
+          console.log('Stack: ' + response.stack.replace(/\\n/g, '\n'));
         }
 
         if (params.error !== undefined && params.error.constructor === Error) {
-          const error = params.error as Error
+          const error = params.error as Error;
           if (error.stack !== undefined) {
-            console.log('Stack: ' + error.stack.replace(/\\n/g, '\n'))
+            console.log('Stack: ' + error.stack.replace(/\\n/g, '\n'));
           }
         }
 
@@ -197,12 +197,12 @@ export abstract class Controller {
           this.frameworkConfig.instrumentErrorRequestBodies &&
           this.frameworkConfig.instrumentErrorRequestBodiesRouteBlacklist.indexOf(req.url) === -1
         ) {
-          console.log('Request body for error was: ' + JSON.stringify(req.body, null, 2))
+          console.log('Request body for error was: ' + JSON.stringify(req.body, null, 2));
         }
       }
 
-      res.status(code).json(response)
-    }
+      res.status(code).json(response);
+    };
   }
 
   /**
@@ -227,8 +227,8 @@ export abstract class Controller {
         .status(params.code || HTTP_CODE_OK)
         .json(
           Controller.responseEnvelope(req, title, params.code, true, params.data, null, undefined, null, params.message)
-        )
-    }
+        );
+    };
   }
 
   private static responseEnvelope(
@@ -257,27 +257,27 @@ export abstract class Controller {
         method: req.method,
         route: routeTitle,
       },
-    }
+    };
     if (data) {
-      response.data = data
+      response.data = data;
     }
     if (error) {
       if (error.constructor === Error) {
-        response.error = error.message
-        response.stack = error.stack
+        response.error = error.message;
+        response.stack = error.stack;
       } else {
-        response.error = error
-        response.stack = stack
+        response.error = error;
+        response.stack = stack;
       }
-      response.breadcrumb = Keygen.uid(6).toUpperCase()
+      response.breadcrumb = Keygen.uid(6).toUpperCase();
     }
     if (meta) {
-      response.meta = meta
+      response.meta = meta;
     }
     if (message) {
-      response.message = message
+      response.message = message;
     }
-    return response
+    return response;
   }
 
   public zipFile() {
@@ -289,21 +289,21 @@ export abstract class Controller {
               Controller.errResponse(req, res, this.constructor.name)({
                 code: 500,
                 error: 'ZIP route result must include data and fileName',
-              })
+              });
             } else {
-              res.set('Content-Type', 'application/zip')
-              res.set('Content-Disposition', 'attachment; filename=' + zipResult.fileName)
-              res.set('Content-Length', zipResult.data.length)
-              res.end(zipResult.data, 'binary')
+              res.set('Content-Type', 'application/zip');
+              res.set('Content-Disposition', 'attachment; filename=' + zipResult.fileName);
+              res.set('Content-Length', zipResult.data.length);
+              res.end(zipResult.data, 'binary');
             }
           })
           .catch(err => {
-            this.handleError(req, res, err)
-          })
+            this.handleError(req, res, err);
+          });
       } catch (err) {
-        this.handleError(req, res, err)
+        this.handleError(req, res, err);
       }
-    }
+    };
   }
 
   public csvFile() {
@@ -315,34 +315,34 @@ export abstract class Controller {
               Controller.errResponse(req, res, this.constructor.name)({
                 code: 500,
                 error: 'CSV route emitted non-array result: ' + result.constructor.name,
-              })
+              });
             } else {
-              ;(res as any).csv(result)
+              (res as any).csv(result);
             }
           })
           .catch(err => {
-            this.handleError(req, res, err)
-          })
+            this.handleError(req, res, err);
+          });
       } catch (handlerError) {
-        this.handleError(req, res, handlerError)
+        this.handleError(req, res, handlerError);
       }
-    }
+    };
   }
 
   public jsonAPI() {
     return (req: Request, res: Response) => {
-      const start = new Date()
+      const start = new Date();
       try {
         this.runRequest(req, res)
           .then(handlerResult => {
-            handlerResult = handlerResult || {}
+            handlerResult = handlerResult || {};
             const payload =
               handlerResult.code !== undefined
                 ? handlerResult
                 : {
                     code: this.successCode,
                     data: handlerResult,
-                  }
+                  };
 
             if (Controller.frameworkConfig.instrumentAllRequests) {
               console.log(
@@ -353,77 +353,77 @@ export abstract class Controller {
                   (new Date().getTime() - start.getTime()).toFixed(2) +
                   ' ms, status=' +
                   payload.code
-              )
+              );
             }
 
-            Controller.okResponse(req, res, this.constructor.name)(payload)
+            Controller.okResponse(req, res, this.constructor.name)(payload);
           })
           .catch(err => {
-            this.handleError(req, res, err)
-          })
+            this.handleError(req, res, err);
+          });
       } catch (handlerError) {
-        this.handleError(req, res, handlerError)
+        this.handleError(req, res, handlerError);
       }
-    }
+    };
   }
 
-  protected abstract async handleRequest(params: any, req: Request, res: Response): Promise<any>
+  protected abstract async handleRequest(params: any, req: Request, res: Response): Promise<any>;
 
   private async runRequest(req: Request, res: Response) {
-    const params = await this.parseParams(req)
-    return await this.handleRequest(params, req, res)
+    const params = await this.parseParams(req);
+    return await this.handleRequest(params, req, res);
   }
 
   private handleError(req: Request, res: Response, handlerError: any) {
-    handlerError = handlerError || {}
-    const code = handlerError.code || this.failureCode
-    const error = handlerError.error || handlerError.response || handlerError.message || handlerError
-    console.log('Error ' + code + ' during request: ' + JSON.stringify(error) + ', ')
+    handlerError = handlerError || {};
+    const code = handlerError.code || this.failureCode;
+    const error = handlerError.error || handlerError.response || handlerError.message || handlerError;
+    console.log('Error ' + code + ' during request: ' + JSON.stringify(error) + ', ');
     if (handlerError.stack) {
-      console.log('stack: ' + handlerError.stack)
+      console.log('stack: ' + handlerError.stack);
     }
-    Controller.errResponse(req, res, this.constructor.name)({ code, error, stack: handlerError.stack })
+    Controller.errResponse(req, res, this.constructor.name)({ code, error, stack: handlerError.stack });
   }
 
   private parseParams(req: Request): Promise<IParamsObject> {
-    const parameters: IParamsObject = {}
+    const parameters: IParamsObject = {};
     for (let paramIdx = 0; paramIdx < this.requiredQueryParams.length; paramIdx++) {
-      const requiredParam = this.requiredQueryParams[paramIdx]
-      const foundParam: any = req.query[requiredParam]
+      const requiredParam = this.requiredQueryParams[paramIdx];
+      const foundParam: any = req.query[requiredParam];
       if (foundParam === undefined) {
         return Promise.reject({
           code: HTTP_CODE_INPUT_ERROR,
           error: 'Required query parameter not found in request url: ' + requiredParam,
-        })
+        });
       } else {
-        parameters[requiredParam] = foundParam
+        parameters[requiredParam] = foundParam;
       }
     }
     for (let paramIdx = 0; paramIdx < this.requiredRouteParams.length; paramIdx++) {
-      const requiredParam = this.requiredRouteParams[paramIdx]
-      const foundParam = req.params[requiredParam]
+      const requiredParam = this.requiredRouteParams[paramIdx];
+      const foundParam = req.params[requiredParam];
       if (foundParam === undefined) {
         return Promise.reject({
           code: HTTP_CODE_SERVER_ERROR,
           error: 'Required route parameter not mapped for request: ' + requiredParam,
-        })
+        });
       } else {
-        parameters[requiredParam] = foundParam
+        parameters[requiredParam] = foundParam;
       }
     }
     for (let paramIdx = 0; paramIdx < this.requiredBodyParams.length; paramIdx++) {
-      const requiredParam = this.requiredBodyParams[paramIdx]
-      const foundParam = req.body[requiredParam]
+      const requiredParam = this.requiredBodyParams[paramIdx];
+      const foundParam = req.body[requiredParam];
       if (foundParam === undefined) {
         return Promise.reject({
           code: HTTP_CODE_SERVER_ERROR,
           error: 'Required body parameter not included with request: ' + requiredParam,
-        })
+        });
       } else {
-        parameters[requiredParam] = foundParam
+        parameters[requiredParam] = foundParam;
       }
     }
 
-    return Promise.resolve(parameters)
+    return Promise.resolve(parameters);
   }
 }
