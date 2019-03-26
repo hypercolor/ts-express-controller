@@ -285,7 +285,7 @@ export abstract class Controller {
       try {
         this.runRequest(req, res)
           .then((zipResult: any) => {
-            if (!zipResult.data || zipResult.fileName) {
+            if (!zipResult.data || !zipResult.fileName) {
               Controller.errResponse(req, res, this.constructor.name)({
                 code: 500,
                 error: 'ZIP route result must include data and fileName',

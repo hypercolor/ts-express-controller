@@ -296,10 +296,10 @@ var Controller = /** @class */ (function () {
             try {
                 _this.runRequest(req, res)
                     .then(function (zipResult) {
-                    if (!zipResult.data || zipResult.fileName) {
+                    if (!zipResult.data || !zipResult.fileName) {
                         Controller.errResponse(req, res, _this.constructor.name)({
                             code: 500,
-                            error: 'ZIP route result must include data and fileName'
+                            error: 'ZIP route result must include data and fileName',
                         });
                     }
                     else {
@@ -358,7 +358,13 @@ var Controller = /** @class */ (function () {
                             data: handlerResult,
                         };
                     if (Controller.frameworkConfig.instrumentAllRequests) {
-                        console.log(req.method + ' ' + req.url + ' ' + (new Date().getTime() - start.getTime()).toFixed(2) + ' ms, status=' + payload.code);
+                        console.log(req.method +
+                            ' ' +
+                            req.url +
+                            ' ' +
+                            (new Date().getTime() - start.getTime()).toFixed(2) +
+                            ' ms, status=' +
+                            payload.code);
                     }
                     Controller.okResponse(req, res, _this.constructor.name)(payload);
                 })

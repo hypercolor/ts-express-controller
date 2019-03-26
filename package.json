@@ -1,6 +1,6 @@
 {
   "name": "ts-express-controller",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "TypeScript express route helper",
   "main": "index.js",
   "types": "index.d.ts",
