@@ -280,87 +280,110 @@ export abstract class Controller {
     return response
   }
 
+  public zipFile() {
+    return (req: Request, res: Response) => {
+      try {
+        this.runRequest(req, res)
+          .then((zipResult: any) => {
+            if (!zipResult.data || zipResult.fileName) {
+              Controller.errResponse(req, res, this.constructor.name)({
+                code: 500,
+                error: 'ZIP route result must include data and fileName',
+              })
+            } else {
+              res.set('Content-Type', 'application/zip')
+              res.set('Content-Disposition', 'attachment; filename=' + zipResult.fileName)
+              res.set('Content-Length', zipResult.data.length)
+              res.end(zipResult.data, 'binary')
+            }
+          })
+          .catch(err => {
+            this.handleError(req, res, err)
+          })
+      } catch (err) {
+        this.handleError(req, res, err)
+      }
+    }
+  }
+
   public csvFile() {
     return (req: Request, res: Response) => {
-      this.parseParams(req)
-        .then(parameters => {
-          return this.handleRequest(parameters, req, res)
-        })
-        .then(result => {
-          if (result.constructor !== Array) {
-            Controller.errResponse(req, res, this.constructor.name)({
-              code: 500,
-              error: 'CSV route emitted non-array result: ' + result.constructor.name,
-            })
-          } else {
-            ;(res as any).csv(result)
-          }
-
-          // res.setHeader('Content-disposition', 'attachment; filename=data.csv')
-          // res.writeHead(200, {
-          //   'Content-Type': 'text/csv',
-          // })
-          //
-          // csvStringify(result, (csv, err) => {
-          //   if (err) {
-          //     Controller.errResponse(req, res, this.constructor.name)({ code: 500, error: err })
-          //   } else {
-          //     console.log('Sending csv to response: ' + csv);
-          //     res.send(csv)
-          //   }
-          // })
-        })
-        .catch((handlerError: any) => {
-          handlerError = handlerError || {}
-          const code = handlerError.code || this.failureCode
-          const error = handlerError.error || handlerError.response || handlerError.message || handlerError
-          console.log('Error ' + code + ' during request: ' + JSON.stringify(error) + ', ')
-          if (handlerError.stack) {
-            console.log('stack: ' + handlerError.stack)
-          }
-          Controller.errResponse(req, res, this.constructor.name)({ code, error, stack: handlerError.stack })
-        })
+      try {
+        this.runRequest(req, res)
+          .then(result => {
+            if (result.constructor !== Array) {
+              Controller.errResponse(req, res, this.constructor.name)({
+                code: 500,
+                error: 'CSV route emitted non-array result: ' + result.constructor.name,
+              })
+            } else {
+              ;(res as any).csv(result)
+            }
+          })
+          .catch(err => {
+            this.handleError(req, res, err)
+          })
+      } catch (handlerError) {
+        this.handleError(req, res, handlerError)
+      }
     }
   }
 
   public jsonAPI() {
     return (req: Request, res: Response) => {
       const start = new Date()
-      this.parseParams(req)
-        .then(parameters => {
-          return this.handleRequest(parameters, req, res)
-        })
-        .then(handlerResult => {
-          handlerResult = handlerResult || {}
-          const payload =
-            handlerResult.code !== undefined
-              ? handlerResult
-              : {
-                  code: this.successCode,
-                  data: handlerResult,
-                }
+      try {
+        this.runRequest(req, res)
+          .then(handlerResult => {
+            handlerResult = handlerResult || {}
+            const payload =
+              handlerResult.code !== undefined
+                ? handlerResult
+                : {
+                    code: this.successCode,
+                    data: handlerResult,
+                  }
 
-          const duration = (new Date().getTime() - start.getTime()).toFixed(2)
-          if (Controller.frameworkConfig.instrumentAllRequests) {
-            console.log(req.method + ' ' + req.url + ' ' + duration + ' ms, status=' + payload.code)
-          }
+            if (Controller.frameworkConfig.instrumentAllRequests) {
+              console.log(
+                req.method +
+                  ' ' +
+                  req.url +
+                  ' ' +
+                  (new Date().getTime() - start.getTime()).toFixed(2) +
+                  ' ms, status=' +
+                  payload.code
+              )
+            }
 
-          Controller.okResponse(req, res, this.constructor.name)(payload)
-        })
-        .catch((handlerError: any) => {
-          handlerError = handlerError || {}
-          const code = handlerError.code || this.failureCode
-          const error = handlerError.error || handlerError.response || handlerError.message || handlerError
-          console.log('Error ' + code + ' during request: ' + JSON.stringify(error) + ', ')
-          if (handlerError.stack) {
-            console.log('stack: ' + handlerError.stack)
-          }
-          Controller.errResponse(req, res, this.constructor.name)({ code, error, stack: handlerError.stack })
-        })
+            Controller.okResponse(req, res, this.constructor.name)(payload)
+          })
+          .catch(err => {
+            this.handleError(req, res, err)
+          })
+      } catch (handlerError) {
+        this.handleError(req, res, handlerError)
+      }
     }
   }
 
   protected abstract async handleRequest(params: any, req: Request, res: Response): Promise<any>
+
+  private async runRequest(req: Request, res: Response) {
+    const params = await this.parseParams(req)
+    return await this.handleRequest(params, req, res)
+  }
+
+  private handleError(req: Request, res: Response, handlerError: any) {
+    handlerError = handlerError || {}
+    const code = handlerError.code || this.failureCode
+    const error = handlerError.error || handlerError.response || handlerError.message || handlerError
+    console.log('Error ' + code + ' during request: ' + JSON.stringify(error) + ', ')
+    if (handlerError.stack) {
+      console.log('stack: ' + handlerError.stack)
+    }
+    Controller.errResponse(req, res, this.constructor.name)({ code, error, stack: handlerError.stack })
+  }
 
   private parseParams(req: Request): Promise<IParamsObject> {
     const parameters: IParamsObject = {}
