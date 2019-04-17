@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Keygen } from 'hc-utilities';
+import * as util from 'util';
 
 require('express-csv');
 
@@ -336,6 +337,9 @@ export abstract class Controller {
         this.runRequest(req, res)
           .then(handlerResult => {
             handlerResult = handlerResult || {};
+            if (util.types.isPromise(handlerResult)) {
+              console.log('Warning, handler result is a promise, did you forget to await?');
+            }
             const payload =
               handlerResult.code !== undefined
                 ? handlerResult

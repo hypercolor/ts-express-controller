@@ -116,6 +116,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Controller", function() { return Controller; });
 /* harmony import */ var hc_utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! hc-utilities */ "hc-utilities");
 /* harmony import */ var hc_utilities__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(hc_utilities__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! util */ "util");
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(util__WEBPACK_IMPORTED_MODULE_1__);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -151,6 +153,7 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+
 
 __webpack_require__(/*! express-csv */ "express-csv");
 var isNumeric = function (n) {
@@ -351,6 +354,9 @@ var Controller = /** @class */ (function () {
                 _this.runRequest(req, res)
                     .then(function (handlerResult) {
                     handlerResult = handlerResult || {};
+                    if (util__WEBPACK_IMPORTED_MODULE_1__["types"].isPromise(handlerResult)) {
+                        console.log('Warning, handler result is a promise, did you forget to await?');
+                    }
                     var payload = handlerResult.code !== undefined
                         ? handlerResult
                         : {
@@ -495,6 +501,17 @@ module.exports = require("express-csv");
 /***/ (function(module, exports) {
 
 module.exports = require("hc-utilities");
+
+/***/ }),
+
+/***/ "util":
+/*!***********************!*\
+  !*** external "util" ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("util");
 
 /***/ })
 
