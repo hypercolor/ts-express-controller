@@ -1,6 +1,6 @@
 {
   "name": "ts-express-controller",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "TypeScript express route helper",
   "main": "index.js",
   "types": "index.d.ts",
@@ -99,7 +99,7 @@
     "csv-stringify": "3.0.0",
     "express": "4.16.3",
     "express-csv": "0.6.0",
-    "hc-utilities": "0.1.9",
+    "hc-utilities": "0.2.0",
     "ts-loader": "4.2.0",
     "uglifyjs-webpack-plugin": "1.2.5"
   },
